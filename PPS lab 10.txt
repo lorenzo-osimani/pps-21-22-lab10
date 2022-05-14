@@ -1,0 +1,167 @@
+%=====1=====
+%Ex 1.1
+%search (Elem , List )
+search(X,[X|_]).
+search(X,[_|Xs]) :- search(X,Xs).
+
+%Ex 1.2
+%search2(Elem,List)
+%looks for two consecutive occurrences of Elem
+search2(X,[X,X|_]).
+search2(X,[_|Xs]) :- search2(X,Xs).
+
+%Ex 1.3
+%looks for two occurrences of Elem with any element in between!
+search_two(X,[X, _, X|_]).
+search_two(X,[_|Xs]) :- search_two(X,Xs).
+
+%Ex 1.4
+%looks for two occurrences of Elem with any element in between!
+search_anytwo(X,[X|Xs]) :- search(X, Xs).
+search_anytwo(X,[_|Xs]) :- search_anytwo(X,Xs).
+
+%=====2=====
+%Ex 2.1
+%size (List , Size )
+%Size will contain the number of elements in List
+size([],0).
+size([_|Xs],N) :- size(Xs,N2), N is N2 + 1.
+
+%Ex 2.2
+%Size will contain the number of elements in List ,
+%written using notation zero , s( zero ), s(s( zero ))..
+size2([],zero).
+size2([_|Xs],s(N)) :- size2(Xs,N).
+
+%Ex 2.3
+%sum(List ,Sum)
+sum([], 0).
+sum([X|Xs], N) :- sum(Xs, N2), N is N2 + X.
+
+%Ex 2.4
+%average(List,Average)
+%it uses average(List,Count,Sum,Average)
+average(List,A) :- average(List,0,0,A).
+average([],C,S,A) :- A is S/C.
+average([X|Xs],C,S,A) :-
+	C2 is C+1,
+	S2 is S+X,
+	average(Xs,C2,S2,A).
+
+%Ex 2.5
+%max(List,Max)
+max([X|Xs], Max) :- max(Xs, Max, X).
+max([], A, A).
+max([X|Xs], A, N) :- X >= N, max(Xs, A, X).
+max([X|Xs], A, N) :- X < N, max(Xs, A, N).
+
+%Ex 2.6
+%minmax(List,Min,Max)
+minmax(List, Min, Max) :- min(List, Min), max(List, Max).
+min([X|Xs], Max) :- min(Xs, Max, X).
+min([], A, A).
+min([X|Xs], A, N) :- X >= N, min(Xs, A, N).
+min([X|Xs], A, N) :- X < N, min(Xs, A, X).
+
+%=====3=====
+%Ex 3.1
+%same(List1,List2)
+%are the two lists exactly the same?
+same([],[]).
+same([X|Xs],[X|Ys]) :- same(Xs,Ys).
+
+%Ex 3.2
+%all_bigger(List1, List2)
+%all elements in List1 are bigger than those in List2, 1 by 1
+all_bigger([], []).
+all_bigger([X|Xs], [Y|Ys]) :- X > Y, all_bigger(Xs, Ys).
+
+%Ex 3.3
+%sublist(List1, List2)
+%List1 should contain elements all also in List2
+sublist([], Y).
+sublist([X|Xs], Y) :- search(X, Y), sublist(Xs, Y).
+
+%=====4=====
+%Ex 4.1
+seq(0, []).
+seq(N, [0|Xs]) :- N2 is N - 1, seq(N2, Xs).
+
+%Ex 4.2
+seqR(0, []).
+seqR(N, [N|Xs]) :- N2 is N - 1, seqR(N2, Xs).
+
+%Ex 4.3
+seqR2(N, List) :- seqR2(0, N, List).
+seqR2(N, N, [N]).
+seqR2(A, N, [A|Xs]) :- A2 is A + 1, seqR2(A2, N, Xs).
+
+%=====5=====
+%last(List, Element)
+%List is assumed to be List[Int], Element is the last element of the list
+last([X|[]], X).
+last([X|Xs], Element) :- last(Xs, Element).
+
+%map(List, ReturnList)
+%add plus one to all the elements of List
+map([], []).
+map([X|Xs], [Y|Ys]) :- Y is X + 1, map(Xs, Ys).
+
+%filter(List, ReturnList)
+%filter all the elements in the first list > 0
+filter([], []).
+filter([X|Xs], [X|Ys]) :- X > 0, filter(Xs, Ys).
+filter([X|Xs], Ys) :- X =< 0, filter(Xs, Ys).
+
+%count(List, N)
+%counts the elements in List satisfying _>0
+count([], 0).
+count([X|Xs], N) :- X > 0, count(Xs, N2), N is N2 + 1.
+count([X|Xs], N) :- X =< 0, count(Xs, N).
+
+%find(List, Element)
+%find the first element satisfying _>0
+find([], []).
+find([X|Xs], X) :- X > 0.
+find([X|Xs], N) :- X =< 0, find(Xs, N).
+
+%dropRight(List, ReturnList)
+%drops the last two elements of the List
+dropRight(List, ReturnList) :- dropRight(List, ReturnList, N).
+dropRight([], [], 0).
+dropRight([X|Xs], Y, N) :- dropRight(Xs, Y, N2), N2 < 2, N is N2 + 1.
+dropRight([X|Xs], [X|Ys], N) :- dropRight(Xs, Ys, N), N >= 2.
+
+%dropWhile(List, ReturnList)
+%drops the elements of list while they don't satisfy _ > 0
+dropWhile([], []).
+dropWhile([X|Xs], Y) :- X =< 0, dropWhile(Xs, Y).
+dropWhile([X|Xs], [X|Xs]) :- X > 0.
+
+%partition(List, TrueList, FalseList)
+%partition the List based on _ > 0
+partition([], [], []).
+partition([X|Xs], [X|Ys], Z) :- X > 0, partition(Xs, Ys, Z).
+partition([X|Xs], Y, [X|Zs]) :- X =< 0, partition(Xs, Y, Zs).
+
+%reversed(List, ReturnList)
+%reverses the order of the List
+reverse([], []).
+reverse([X|Xs], [Ys|X]) :- reverse(Xs, Ys).
+
+%drop(List, ReturnList)
+%drops the first two elements of the List
+drop(List, ReturnList) :- drop(List, ReturnList, 2).
+drop(X, X, 0).
+drop([X|Xs], Y, N) :- N2 is N - 1, drop(Xs, Y, N2).
+
+%take(List, ReturnList)
+%takes the first two elements of the List
+take(List, ReturnList) :- take(List, ReturnList, 2).
+take(X, [], 0).
+take([X|Xs], [X|Ys], N) :- N2 is N -1, take(Xs, Ys, N2).
+
+%zip(List1, List2, ReturnList)
+%return a list with elements from booth lists coupled in pairs.
+zip([X|Xs], [Y|Ys], [[X,Y]|Zs]) :- zip(Xs, Ys, Zs).
+zip([],[],[]).
